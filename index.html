@@ -291,7 +291,7 @@
     body { margin:0 !important; padding:0 !important; background:#0a1628 !important; color:#fff !important; font-family:'Cairo',sans-serif; }
     body::before { display:none !important; }
     .toast-container, header .header-actions, .stats-bar, .toolbar,
-    .filter-row, .actions-cell, .th-center:last-child, td:last-child,
+    .filter-row, .actions-cell,
     .modal-overlay { display:none !important; }
     .select-col, thead th.select-col, tbody td.select-col { display:none !important; }
 
@@ -390,6 +390,18 @@
   <div class="table-scroll">
   <div class="table-wrapper">
     <table id="patientTable">
+      <colgroup>
+        <col style="width:3%">    <!-- checkbox -->
+        <col style="width:5%">    <!-- room -->
+        <col style="width:8%">    <!-- admission -->
+        <col style="width:14%">   <!-- name -->
+        <col style="width:4%">    <!-- age -->
+        <col style="width:20%">   <!-- diagnosis -->
+        <col style="width:16%">   <!-- decision -->
+        <col style="width:7%">    <!-- status -->
+        <col style="width:7%">    <!-- skin -->
+        <col style="width:16%">   <!-- notes -->
+      </colgroup>
       <thead>
         <!-- Column headers -->
         <tr class="header-row">
