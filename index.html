@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Patient Data Management System</title>
+<title>Ibn Tharwat Hospital Management System</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -297,22 +297,22 @@
 
     .container { padding:5mm 4mm 4mm 4mm !important; margin:0 !important; max-width:100% !important; width:100% !important; }
     header { border-bottom:1px solid rgba(255,255,255,0.15) !important; padding:2px 0 3px !important; margin-bottom:4px !important; }
-    h1 { font-size:8pt !important; }
-    h1 span { font-size:6.5pt !important; }
+    h1 { font-size:11pt !important; }
+    h1 span { font-size:9pt !important; }
     .logo-icon { width:24px !important; height:24px !important; font-size:12px !important; }
-    .print-header-info { display:flex !important; justify-content:space-between; font-size:7pt !important; color:rgba(255,255,255,0.5); margin-bottom:4px; }
+    .print-header-info { display:flex !important; justify-content:space-between; font-size:10pt !important; color:rgba(255,255,255,0.5); margin-bottom:4px; }
 
     .table-scroll { border-radius:0 !important; overflow:visible !important; border:1px solid rgba(37,99,235,0.3) !important; width:100% !important; }
     .table-wrapper { overflow:visible !important; }
-    table { min-width:unset !important; width:100% !important; table-layout:fixed !important; border-collapse:collapse !important; font-size:7pt !important; }
-    th, td, .badge, .room-cell, .name-cell { font-size:7pt !important; line-height:1.3 !important; }
+    table { min-width:unset !important; width:100% !important; table-layout:fixed !important; border-collapse:collapse !important; font-size:10pt !important; }
+    th, td, .badge, .room-cell, .name-cell { font-size:10pt !important; line-height:1.3 !important; }
     .header-row { background:rgba(37,99,235,0.45) !important; }
-    .header-row th { padding:3pt 3pt !important; font-size:7pt !important; color:#93c5fd !important; text-align:right !important; white-space:normal !important; overflow:visible !important; letter-spacing:0 !important; word-break:break-word !important; }
+    .header-row th { padding:5pt 5pt !important; font-size:10pt !important; color:#93c5fd !important; text-align:right !important; white-space:normal !important; overflow:visible !important; letter-spacing:0 !important; word-break:break-word !important; }
     tbody tr { border-bottom:1px solid rgba(255,255,255,0.07) !important; }
     tbody tr:last-child { border-bottom:none !important; }
     tbody tr:hover { background:none !important; }
-    td { padding:3pt 3pt !important; font-size:7pt !important; color:rgba(255,255,255,0.9) !important; text-align:right !important; white-space:normal !important; overflow:visible !important; vertical-align:top !important; word-break:break-word !important; }
-    .badge { display:inline-block !important; padding:1pt 3pt !important; font-size:7pt !important; border-radius:8px !important; font-weight:600 !important; }
+    td { padding:5pt 5pt !important; font-size:10pt !important; color:rgba(255,255,255,0.9) !important; text-align:right !important; white-space:normal !important; overflow:visible !important; vertical-align:top !important; word-break:break-word !important; }
+    .badge { display:inline-block !important; padding:1pt 3pt !important; font-size:10pt !important; border-radius:8px !important; font-weight:600 !important; }
     .badge-green  { background:rgba(16,185,129,0.25) !important; color:#34d399 !important; }
     .badge-red    { background:rgba(239,68,68,0.25)  !important; color:#f87171 !important; }
     .badge-yellow { background:rgba(245,158,11,0.25) !important; color:#fbbf24 !important; }
@@ -346,7 +346,7 @@
   <header>
     <div class="header-left">
       <div class="logo-icon">🏥</div>
-      <h1>Patient Data Management <span>نظام إدارة بيانات المرضى</span></h1>
+      <h1>Patient Data Management System<span>نظام إدارة بيانات المرضى</span></h1>
     </div>
     <div class="header-actions">
       <div class="sync-status">
@@ -354,10 +354,8 @@
         <span id="syncText">Not connected to Google Sheets</span>
       </div>
       <button class="btn btn-ghost" onclick="openConfigModal()">⚙️ Google Sheets</button>
-      <button class="btn btn-success" onclick="syncFromSheets()">🔄 Sync</button>
       <button class="btn btn-ghost" onclick="openPrintModal()" title="Print / Save as PDF">🖨️ Print</button>
       <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle light / dark">🌙</button>
-      <button class="btn btn-primary" onclick="openAddModal()">+ Add Patient</button>
     </div>
   </header>
 
@@ -375,8 +373,8 @@
       <div class="stat-info"><label>Waiting</label><strong id="statPending" style="color:#f59e0b">0</strong></div>
     </div>
     <div class="stat-card">
-      <div class="stat-icon">🔄</div>
-      <div class="stat-info"><label>Last Sync</label><strong id="statSync" style="font-size:0.88rem;color:rgba(255,255,255,0.55)">—</strong></div>
+      <div class="stat-icon">✔️</div>
+      <div class="stat-info"><label>Done</label><strong id="statSync" style="font-size:1.35rem;color:#10b981">0</strong></div>
     </div>
   </div>
 
@@ -395,28 +393,18 @@
       <thead>
         <!-- Column headers -->
         <tr class="header-row">
-          <th class="th-center select-col"><input type="checkbox" id="checkAll" onclick="toggleCheckAll(this)" title="Select all" style="width:16px;height:16px;cursor:pointer;accent-color:var(--accent)"></th>
           <th onclick="sortBy('room')">Room</th>
           <th onclick="sortBy('admission')">Date of Admission</th>
           <th onclick="sortBy('name')">Name</th>
           <th onclick="sortBy('age')">Age</th>
           <th onclick="sortBy('diagnosis')">Diagnosis</th>
           <th onclick="sortBy('decision')">Decision</th>
-          <th onclick="sortBy('hb')">Hb</th>
-          <th onclick="sortBy('plt')">PLT</th>
-          <th onclick="sortBy('inr')">INR</th>
-          <th onclick="sortBy('lft')">LFT</th>
-          <th onclick="sortBy('rft')">RFT</th>
-          <th onclick="sortBy('abo')">ABO</th>
-          <th onclick="sortBy('vir')">VIR</th>
           <th onclick="sortBy('anesthesia')">Status</th>
           <th onclick="sortBy('skin')">Skin</th>
           <th onclick="sortBy('notes')">Notes</th>
-          <th class="th-center">Actions</th>
         </tr>
         <!-- Per-column filter inputs -->
         <tr class="filter-row">
-          <th class="select-col"><input type="text" disabled></th>
           <th><input type="text" id="fil_room"      placeholder="🔍" oninput="renderTable()"></th>
           <th>
             <div class="date-filter-wrapper">
@@ -439,17 +427,9 @@
           <th><input type="text" id="fil_age"       placeholder="🔍" oninput="renderTable()"></th>
           <th><input type="text" id="fil_diagnosis"  placeholder="🔍" oninput="renderTable()"></th>
           <th><input type="text" id="fil_decision"   placeholder="🔍" oninput="renderTable()"></th>
-          <th><input type="text" id="fil_hb"        placeholder="🔍" oninput="renderTable()"></th>
-          <th><input type="text" id="fil_plt"       placeholder="🔍" oninput="renderTable()"></th>
-          <th><input type="text" id="fil_inr"       placeholder="🔍" oninput="renderTable()"></th>
-          <th><input type="text" id="fil_lft"       placeholder="🔍" oninput="renderTable()"></th>
-          <th><input type="text" id="fil_rft"       placeholder="🔍" oninput="renderTable()"></th>
-          <th><input type="text" id="fil_abo"       placeholder="🔍" oninput="renderTable()"></th>
-          <th><input type="text" id="fil_vir"       placeholder="🔍" oninput="renderTable()"></th>
           <th><input type="text" id="fil_anesthesia"  placeholder="🔍" oninput="renderTable()"></th>
           <th><input type="text" id="fil_skin"      placeholder="🔍" oninput="renderTable()"></th>
           <th><input type="text" id="fil_notes"     placeholder="🔍" oninput="renderTable()"></th>
-          <th><input type="text" disabled></th>
         </tr>
       </thead>
       <tbody id="tableBody"></tbody>
@@ -457,98 +437,6 @@
     <div class="empty-state" id="emptyState">
       <div class="icon">🏥</div>
       <p>No patient records. Add a patient or sync from Google Sheets.</p>
-    </div>
-  </div>
-  </div>
-</div>
-
-<!-- Add / Edit Modal -->
-<div class="modal-overlay" id="patientModal">
-  <div class="modal">
-    <div class="modal-header">
-      <h2 class="modal-title" id="modalTitle">Add New Patient</h2>
-      <button class="modal-close" onclick="closeModal()">✕</button>
-    </div>
-    <div class="form-grid">
-      <div class="form-group">
-        <label>Room</label>
-        <input type="text" id="f_room" placeholder="e.g. 101-A">
-      </div>
-      <div class="form-group two-col">
-        <label>Date of Admission</label>
-        <input type="date" id="f_admission">
-      </div>
-      <div class="form-group two-col">
-        <label>Name *</label>
-        <input type="text" id="f_name" placeholder="Patient full name">
-      </div>
-      <div class="form-group">
-        <label>Age</label>
-        <input type="number" id="f_age" placeholder="Years" min="0" max="150">
-      </div>
-      <div class="form-group two-col">
-        <label>Diagnosis</label>
-        <input type="text" id="f_diagnosis" placeholder="Medical diagnosis">
-      </div>
-      <div class="form-group">
-        <label>Decision</label>
-        <input type="text" id="f_decision" placeholder="e.g. Admitted, Pending, Discharged...">
-      </div>
-      <div class="form-group">
-        <label>Hb (g/dL)</label>
-        <input type="text" id="f_hb" placeholder="e.g. 12.5">
-      </div>
-      <div class="form-group">
-        <label>PLT (×10³/μL)</label>
-        <input type="text" id="f_plt" placeholder="e.g. 250">
-      </div>
-      <div class="form-group">
-        <label>INR</label>
-        <input type="text" id="f_inr" placeholder="e.g. 1.1">
-      </div>
-      <div class="form-group">
-        <label>LFT</label>
-        <input type="text" id="f_lft" placeholder="Normal / Abnormal">
-      </div>
-      <div class="form-group">
-        <label>RFT</label>
-        <input type="text" id="f_rft" placeholder="Normal / Abnormal">
-      </div>
-      <div class="form-group">
-        <label>ABO (Blood Group)</label>
-        <select id="f_abo">
-          <option value="">Select…</option>
-          <option>A+</option><option>A-</option>
-          <option>B+</option><option>B-</option>
-          <option>AB+</option><option>AB-</option>
-          <option>O+</option><option>O-</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>VIR (Viral Screen)</label>
-        <input type="text" id="f_vir" placeholder="Negative / Positive">
-      </div>
-      <div class="form-group">
-        <label>Status</label>
-        <select id="f_anesthesia">
-          <option value="">Select…</option>
-          <option>Accepted</option>
-          <option>Waiting</option>
-          <option>Done</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Skin</label>
-        <input type="text" id="f_skin" placeholder="Normal / Notes">
-      </div>
-      <div class="form-group full-width">
-        <label>Notes</label>
-        <textarea id="f_notes" placeholder="Additional notes..."></textarea>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-primary" onclick="savePatient()">💾 Save</button>
-      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
     </div>
   </div>
 </div>
@@ -614,51 +502,6 @@ function doPost(e) {
   </div>
 </div>
 
-<!-- Print Modal -->
-<div class="modal-overlay" id="printModal">
-  <div class="modal" style="max-width:480px">
-    <div class="modal-header">
-      <h2 class="modal-title">🖨️ Print / Save as PDF</h2>
-      <button class="modal-close" onclick="closePrintModal()">✕</button>
-    </div>
-
-    <p style="font-size:0.84rem;color:var(--text-muted);margin-bottom:18px">Choose which patients to include and your preferred output method.</p>
-
-    <h3 style="font-size:0.8rem;font-weight:700;color:var(--accent-light);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">Patients to include</h3>
-    <div class="print-options-grid" style="margin-bottom:20px">
-      <div class="print-option-card selected" id="optAll" onclick="selectPrintScope('all')">
-        <div class="icon">👥</div>
-        <h4>All Patients</h4>
-        <p>Print every record currently in the table</p>
-      </div>
-      <div class="print-option-card" id="optSelected" onclick="selectPrintScope('selected')">
-        <div class="icon">☑️</div>
-        <h4>Selected Patients</h4>
-        <p id="selectedCountLabel">0 rows checked in the table</p>
-      </div>
-    </div>
-
-    <h3 style="font-size:0.8rem;font-weight:700;color:var(--accent-light);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">Output format</h3>
-    <div class="print-options-grid">
-      <div class="print-option-card selected" id="optPrint" onclick="selectPrintMethod('print')">
-        <div class="icon">🖨️</div>
-        <h4>Print</h4>
-        <p>Send directly to your printer</p>
-      </div>
-      <div class="print-option-card" id="optPDF" onclick="selectPrintMethod('pdf')">
-        <div class="icon">📄</div>
-        <h4>Save as PDF</h4>
-        <p>Save to PDF via your browser's print dialog</p>
-      </div>
-    </div>
-
-    <div class="modal-footer" style="margin-top:22px">
-      <button class="btn btn-primary" onclick="executePrint()">🖨️ Continue</button>
-      <button class="btn btn-ghost"   onclick="closePrintModal()">Cancel</button>
-    </div>
-  </div>
-</div>
-
 <script>
   // ── State ────────────────────────────────────────────────────
   let patients  = JSON.parse(localStorage.getItem('patients')  || '[]');
@@ -691,7 +534,7 @@ function doPost(e) {
     applyTheme(document.body.classList.contains('light') ? 'dark' : 'light');
   }
 
-  const COLS = ['room','admission','name','age','diagnosis','decision','hb','plt','inr','lft','rft','abo','vir','anesthesia','skin','notes'];
+  const COLS = ['room','admission','name','age','diagnosis','decision','anesthesia','skin','notes'];
 
   // ── Render ───────────────────────────────────────────────────
   function renderTable() {
@@ -743,29 +586,15 @@ function doPost(e) {
       thead.style.display = '';
       tbody.innerHTML = filtered.map(p => `
         <tr data-id="${p.id}">
-          <td class="td-center select-col"><input type="checkbox" class="row-check" value="${p.id}" onchange="updateCheckAllState()"></td>
           <td class="room-cell">${esc(p.room)}</td>
           <td>${p.admission ? esc(p.admission) : esc('')}</td>
           <td class="name-cell">${esc(p.name)}</td>
           <td>${esc(p.age)}</td>
-          <td>${esc(p.diagnosis)}</td>
-          <td>${decisionBadge(p.decision)}</td>
-          <td>${hbBadge(p.hb)}</td>
-          <td>${esc(p.plt)}</td>
-          <td>${inrBadge(p.inr)}</td>
-          <td>${labBadge(p.lft)}</td>
-          <td>${labBadge(p.rft)}</td>
-          <td>${p.abo ? `<span class="badge badge-blue">${esc(p.abo)}</span>` : esc('')}</td>
-          <td>${virBadge(p.vir)}</td>
+          <td style="max-width:500px;white-space:normal;font-size:1rem">${esc(p.diagnosis)}</td>
+          <td style="max-width:500px;white-space:normal;font-size:1rem">${decisionBadge(p.decision)}</td>
           <td>${esc(p.anesthesia)}</td>
           <td>${esc(p.skin)}</td>
           <td style="max-width:200px;white-space:normal;font-size:0.78rem;color:var(--text-muted)">${esc(p.notes)}</td>
-          <td class="td-center">
-            <div class="actions-cell">
-              <button class="btn btn-ghost btn-sm" onclick="openEditModal(${p.id})">✏️</button>
-              <button class="btn btn-danger btn-sm" onclick="deletePatient(${p.id})">🗑️</button>
-            </div>
-          </td>
         </tr>`).join('');
     }
     updateStats();
@@ -788,40 +617,18 @@ function doPost(e) {
     return `<span class="badge ${cls}">${esc(v)}</span>`;
   }
 
-  function hbBadge(v) {
-    if (!v) return esc('');
-    const n = parseFloat(v);
-    const cls = isNaN(n) ? 'badge-gray' : (n<8?'badge-red':n<12?'badge-yellow':'badge-green');
-    return `<span class="badge ${cls}">${esc(v)}</span>`;
-  }
 
-  function inrBadge(v) {
-    if (!v) return esc('');
-    const n = parseFloat(v);
-    const cls = isNaN(n) ? 'badge-gray' : (n>1.5?'badge-red':'badge-green');
-    return `<span class="badge ${cls}">${esc(v)}</span>`;
-  }
 
-  function labBadge(v) {
-    if (!v) return esc('');
-    const l = v.toLowerCase();
-    const cls = (l.includes('غير')||l.includes('abnorm')||l.includes('raised')||l.includes('high')||l.includes('elevated')) ? 'badge-red' : 'badge-green';
-    return `<span class="badge ${cls}">${esc(v)}</span>`;
-  }
 
-  function virBadge(v) {
-    if (!v) return esc('');
-    const l = v.toLowerCase();
-    const cls = (l.includes('إيجابي')||l.includes('positive')||l.includes('pos')||l.includes('+ve')) ? 'badge-red' : 'badge-green';
-    return `<span class="badge ${cls}">${esc(v)}</span>`;
-  }
 
   function updateStats() {
     document.getElementById('statTotal').textContent = patients.length;
-    const adm = patients.filter(p=>{ const d=(p.anesthesia||'').toLowerCase(); return d.includes('Accepted')||d.includes('قبول')||d.includes('approved')||d.includes('accept'); }).length;
-    const pnd = patients.filter(p=>{ const d=(p.anesthesia||'').toLowerCase(); return d.includes('Waiting')||d.includes('wait')||d.includes('انتظار')||d.includes('hold'); }).length;
+    const adm  = patients.filter(p=>{ const d=(p.anesthesia||'').toLowerCase(); return d.includes('accepted')||d.includes('قبول')||d.includes('approved')||d.includes('accept'); }).length;
+    const pnd  = patients.filter(p=>{ const d=(p.anesthesia||'').toLowerCase(); return d.includes('waiting')||d.includes('wait')||d.includes('انتظار')||d.includes('hold'); }).length;
+    const done = patients.filter(p=>{ const d=(p.anesthesia||'').toLowerCase(); return d.includes('done')||d.includes('منتهي'); }).length;
     document.getElementById('statAccepted').textContent = adm;
     document.getElementById('statPending').textContent  = pnd;
+    document.getElementById('statSync').textContent     = done;
   }
 
   function sortBy(key) {
@@ -836,59 +643,16 @@ function doPost(e) {
   }
 
   // ── CRUD ─────────────────────────────────────────────────────
-  const FIELDS = ['room','admission','name','age','diagnosis','decision','hb','plt','inr','lft','rft','abo','vir','anesthesia','skin','notes'];
 
-  function openAddModal() {
-    editingId = null;
-    document.getElementById('modalTitle').textContent = 'Add New Patient';
-    FIELDS.forEach(f => { const el=document.getElementById('f_'+f); if(el) el.value=''; });
-    document.getElementById('patientModal').classList.add('active');
-  }
 
-  function openEditModal(id) {
-    const p = patients.find(x=>x.id===id); if(!p) return;
-    editingId = id;
-    document.getElementById('modalTitle').textContent = 'Edit Patient Record';
-    FIELDS.forEach(f => { const el=document.getElementById('f_'+f); if(el) el.value=p[f]||''; });
-    document.getElementById('patientModal').classList.add('active');
-  }
 
   function closeModal()       { document.getElementById('patientModal').classList.remove('active'); }
   function closeConfigModal() { document.getElementById('configModal').classList.remove('active'); }
   function openConfigModal()  { document.getElementById('configModal').classList.add('active'); }
 
-  function getFormData() {
-    return FIELDS.reduce((o,f) => { o[f]=(document.getElementById('f_'+f)?.value||'').trim(); return o; }, {});
-  }
 
-  function savePatient() {
-    const data = getFormData();
-    if (!data.name) { showToast('❌ Name is required','error'); return; }
-    if (editingId) {
-      const idx = patients.findIndex(p=>p.id===editingId);
-      patients[idx] = { ...patients[idx], ...data };
-      syncToSheets('update', patients[idx]);
-      showToast('✅ Patient record updated','success');
-    } else {
-      const np = { id: nextId++, ...data };
-      patients.push(np);
-      localStorage.setItem('nextId', nextId);
-      syncToSheets('add', np);
-      showToast('✅ Patient added successfully','success');
-    }
-    saveLocal(); renderTable(); closeModal();
-  }
 
-  function deletePatient(id) {
-    if (!confirm('Delete this patient record?')) return;
-    const rowIdx = patients.findIndex(x=>x.id===id);
-    patients = patients.filter(x=>x.id!==id);
-    syncToSheets('delete', { id: rowIdx+1 });
-    saveLocal(); renderTable();
-    showToast('🗑️ Patient deleted','info');
-  }
 
-  function saveLocal() { localStorage.setItem('patients', JSON.stringify(patients)); }
 
   // ── Sheets Sync ───────────────────────────────────────────────
   function toSheetRow(p) {
@@ -897,15 +661,6 @@ function doPost(e) {
              ABO:p.abo, VIR:p.vir, Anesthesia:p.anesthesia, Skin:p.skin, Notes:p.notes };
   }
 
-  async function syncToSheets(action, rowData) {
-    if (!sheetsUrl) return;
-    setSyncing(true);
-    try {
-      await fetch(sheetsUrl, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({action, row:toSheetRow(rowData), id:rowData.id}), mode:'no-cors' });
-      updateLastSync();
-    } catch(e) { showToast('⚠️ Sheets sync failed','error'); }
-    setSyncing(false);
-  }
 
   async function syncFromSheets() {
     if (!sheetsUrl) { showToast('⚠️ Add a Google Sheets URL first','error'); return; }
@@ -915,7 +670,7 @@ function doPost(e) {
       const json = await res.json();
       if (json.data) {
         patients = json.data.map((row,i) => ({
-          id:i+1, room:row.Room||'', admission:(row.Admission||'').toString().split('T')[0], name:row.Name||'', age:row.Age||'',
+          id:i+1, room:row.Room||'', admission:String(row.Admission||'').trim(), name:row.Name||'', age:row.Age||'',
           diagnosis:row.Diagnosis||'', decision:row.Decision||'',
           hb:row.Hb||'', plt:row.Plt||'', inr:row.INR||'',
           lft:row.LFT||'', rft:row.RFT||'', abo:row.ABO||'',
@@ -934,9 +689,7 @@ function doPost(e) {
     if (connected) document.getElementById('syncDot').classList.remove('syncing');
   }
   function setSyncing(v) { document.getElementById('syncDot').classList.toggle('syncing',v); }
-  function updateLastSync() {
-    document.getElementById('statSync').textContent = new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-  }
+  function updateLastSync() { /* no-op: Done count updated in updateStats */ }
 
   function saveConfig() {
     sheetsUrl = document.getElementById('sheetsUrl').value.trim();
@@ -1019,57 +772,27 @@ function doPost(e) {
   }
 
   // ── Checkbox helpers ─────────────────────────────────────────
-  function toggleCheckAll(cb) {
-    document.querySelectorAll('.row-check').forEach(c => c.checked = cb.checked);
-  }
-  function updateCheckAllState() {
-    const all     = document.querySelectorAll('.row-check');
-    const checked = document.querySelectorAll('.row-check:checked');
-    const ca = document.getElementById('checkAll');
-    if (ca) {
-      ca.checked       = all.length > 0 && checked.length === all.length;
-      ca.indeterminate = checked.length > 0 && checked.length < all.length;
-    }
-  }
-  function getCheckedIds() {
-    return [...document.querySelectorAll('.row-check:checked')].map(c => parseInt(c.value));
-  }
 
-  // ── Print / PDF ───────────────────────────────────────────────
-  let printScope  = 'all';
-  let printMethod = 'print';
 
   function openPrintModal() {
-    const cnt = getCheckedIds().length;
-    document.getElementById('selectedCountLabel').textContent = cnt + ' row' + (cnt !== 1 ? 's' : '') + ' checked in the table';
-    selectPrintScope('all');
     selectPrintMethod('print');
     document.getElementById('printModal').classList.add('active');
   }
   function closePrintModal() { document.getElementById('printModal').classList.remove('active'); }
-
-  function selectPrintScope(v) {
-    printScope = v;
-    document.getElementById('optAll').classList.toggle('selected', v === 'all');
-    document.getElementById('optSelected').classList.toggle('selected', v === 'selected');
-  }
   function selectPrintMethod(v) {
     printMethod = v;
     document.getElementById('optPrint').classList.toggle('selected', v === 'print');
     document.getElementById('optPDF').classList.toggle('selected', v === 'pdf');
   }
+  // ── Print / PDF ───────────────────────────────────────────────
+  let printScope  = 'all';
+  let printMethod = 'print';
+
+
 
   function executePrint() {
     closePrintModal();
-
-    let toPrint;
-    if (printScope === 'selected') {
-      const ids = getCheckedIds();
-      if (!ids.length) { showToast('⚠️ No rows selected – tick checkboxes first', 'error'); return; }
-      toPrint = patients.filter(p => ids.includes(p.id));
-    } else {
-      toPrint = [...patients];
-    }
+    const toPrint = [...patients];
 
     if (!toPrint.length) { showToast('⚠️ No patients to print', 'error'); return; }
 
@@ -1107,7 +830,40 @@ function doPost(e) {
     }, 800);
   }
 
+  function saveLocal() { localStorage.setItem('patients', JSON.stringify(patients)); }
+
+  // Auto-sync every 30 seconds
+  syncFromSheets();
+  setInterval(syncFromSheets, 30000);
   renderTable();
 </script>
+
+<!-- Print Modal -->
+<div class="modal-overlay" id="printModal">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-header">
+      <h2 class="modal-title">🖨️ Print / Save as PDF</h2>
+      <button class="modal-close" onclick="closePrintModal()">✕</button>
+    </div>
+    <p style="font-size:0.84rem;color:var(--text-muted);margin-bottom:18px">Choose your preferred output method.</p>
+    <h3 style="font-size:0.8rem;font-weight:700;color:var(--accent-light);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">Output format</h3>
+    <div class="print-options-grid">
+      <div class="print-option-card selected" id="optPrint" onclick="selectPrintMethod('print')">
+        <div class="icon">🖨️</div>
+        <h4>Print</h4>
+        <p>Send directly to your printer</p>
+      </div>
+      <div class="print-option-card" id="optPDF" onclick="selectPrintMethod('pdf')">
+        <div class="icon">📄</div>
+        <h4>Save as PDF</h4>
+        <p>Save to PDF via your browser's print dialog</p>
+      </div>
+    </div>
+    <div class="modal-footer" style="margin-top:22px">
+      <button class="btn btn-primary" onclick="executePrint()">🖨️ Continue</button>
+      <button class="btn btn-ghost" onclick="closePrintModal()">Cancel</button>
+    </div>
+  </div>
+</div>
 </body>
         </html>
