@@ -393,6 +393,7 @@
       <thead>
         <!-- Column headers -->
         <tr class="header-row">
+          <th class="th-center select-col"><input type="checkbox" id="checkAll" onclick="toggleCheckAll(this)" title="Select all" style="width:16px;height:16px;cursor:pointer;accent-color:var(--accent)"></th>
           <th onclick="sortBy('room')">Room</th>
           <th onclick="sortBy('admission')">Date of Admission</th>
           <th onclick="sortBy('name')">Name</th>
@@ -405,6 +406,7 @@
         </tr>
         <!-- Per-column filter inputs -->
         <tr class="filter-row">
+          <th class="select-col"><input type="text" disabled></th>
           <th><input type="text" id="fil_room"      placeholder="🔍" oninput="renderTable()"></th>
           <th>
             <div class="date-filter-wrapper">
@@ -586,6 +588,7 @@ function doPost(e) {
       thead.style.display = '';
       tbody.innerHTML = filtered.map(p => `
         <tr data-id="${p.id}">
+          <td class="td-center select-col"><input type="checkbox" class="row-check" value="${p.id}" onchange="updateCheckAllState()"></td>
           <td class="room-cell">${esc(p.room)}</td>
           <td>${p.admission ? esc(p.admission) : esc('')}</td>
           <td class="name-cell">${esc(p.name)}</td>
@@ -594,7 +597,7 @@ function doPost(e) {
           <td style="max-width:500px;white-space:normal;font-size:1rem">${decisionBadge(p.decision)}</td>
           <td>${esc(p.anesthesia)}</td>
           <td>${esc(p.skin)}</td>
-          <td style="max-width:200px;white-space:normal;font-size:0.78rem;color:var(--text-muted)">${esc(p.notes)}</td>
+          <td style="max-width:200px;white-space:normal;font-size:0.78rem;">${esc(p.notes)}</td>
         </tr>`).join('');
     }
     updateStats();
@@ -775,15 +778,41 @@ function doPost(e) {
 
 
   function openPrintModal() {
+    const cnt = getCheckedIds().length;
+    document.getElementById('selectedCountLabel').textContent = cnt + ' row' + (cnt !== 1 ? 's' : '') + ' checked in the table';
+    selectPrintScope('all');
     selectPrintMethod('print');
     document.getElementById('printModal').classList.add('active');
   }
   function closePrintModal() { document.getElementById('printModal').classList.remove('active'); }
+  function selectPrintScope(v) {
+    printScope = v;
+    document.getElementById('optAll').classList.toggle('selected', v === 'all');
+    document.getElementById('optSelected').classList.toggle('selected', v === 'selected');
+  }
   function selectPrintMethod(v) {
     printMethod = v;
     document.getElementById('optPrint').classList.toggle('selected', v === 'print');
     document.getElementById('optPDF').classList.toggle('selected', v === 'pdf');
   }
+
+  // ── Checkbox helpers ─────────────────────────────────────────
+  function toggleCheckAll(cb) {
+    document.querySelectorAll('.row-check').forEach(c => c.checked = cb.checked);
+  }
+  function updateCheckAllState() {
+    const all     = document.querySelectorAll('.row-check');
+    const checked = document.querySelectorAll('.row-check:checked');
+    const ca = document.getElementById('checkAll');
+    if (ca) {
+      ca.checked       = all.length > 0 && checked.length === all.length;
+      ca.indeterminate = checked.length > 0 && checked.length < all.length;
+    }
+  }
+  function getCheckedIds() {
+    return [...document.querySelectorAll('.row-check:checked')].map(c => parseInt(c.value));
+  }
+
   // ── Print / PDF ───────────────────────────────────────────────
   let printScope  = 'all';
   let printMethod = 'print';
@@ -792,7 +821,14 @@ function doPost(e) {
 
   function executePrint() {
     closePrintModal();
-    const toPrint = [...patients];
+    let toPrint;
+    if (printScope === 'selected') {
+      const ids = getCheckedIds();
+      if (!ids.length) { showToast('⚠️ No rows selected – tick checkboxes first', 'error'); return; }
+      toPrint = patients.filter(p => ids.includes(p.id));
+    } else {
+      toPrint = [...patients];
+    }
 
     if (!toPrint.length) { showToast('⚠️ No patients to print', 'error'); return; }
 
@@ -845,7 +881,20 @@ function doPost(e) {
       <h2 class="modal-title">🖨️ Print / Save as PDF</h2>
       <button class="modal-close" onclick="closePrintModal()">✕</button>
     </div>
-    <p style="font-size:0.84rem;color:var(--text-muted);margin-bottom:18px">Choose your preferred output method.</p>
+    <p style="font-size:0.84rem;color:var(--text-muted);margin-bottom:18px">Choose which patients to include and your preferred output method.</p>
+    <h3 style="font-size:0.8rem;font-weight:700;color:var(--accent-light);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">Patients to include</h3>
+    <div class="print-options-grid" style="margin-bottom:20px">
+      <div class="print-option-card selected" id="optAll" onclick="selectPrintScope('all')">
+        <div class="icon">👥</div>
+        <h4>All Patients</h4>
+        <p>Print every record currently in the table</p>
+      </div>
+      <div class="print-option-card" id="optSelected" onclick="selectPrintScope('selected')">
+        <div class="icon">☑️</div>
+        <h4>Selected Patients</h4>
+        <p id="selectedCountLabel">0 rows checked in the table</p>
+      </div>
+    </div>
     <h3 style="font-size:0.8rem;font-weight:700;color:var(--accent-light);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">Output format</h3>
     <div class="print-options-grid">
       <div class="print-option-card selected" id="optPrint" onclick="selectPrintMethod('print')">
