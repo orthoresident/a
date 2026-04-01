@@ -991,7 +991,16 @@ function closeConfigModal() { document.getElementById('configModal').classList.r
 function openConfigModal()  { document.getElementById('configModal').classList.add('active'); }
 
 function getFormData() {
-  return FIELDS.reduce((o,f) => { o[f]=(document.getElementById('f_'+f)?.value||'').trim(); return o; }, {});
+  return FIELDS.reduce((o,f) => {
+    let val = (document.getElementById('f_'+f)?.value||'').trim();
+    if (f === 'admission' && val) {
+      // Convert YYYY-MM-DD to D-M-YYYY
+      const parts = val.split('-');
+      if (parts.length === 3) val = parseInt(parts[2]) + '-' + parseInt(parts[1]) + '-' + parts[0];
+    }
+    o[f] = val;
+    return o;
+  }, {});
 }
 
 async function savePatient() {
@@ -1075,7 +1084,13 @@ async function syncFromSheets() {
         seen.set(uid, {
           _uid:      uid,
           room:      row.Room||'',
-          admission: String(row.Admission||'').trim(),
+          admission: (() => {
+            let d = String(row.Admission||'').trim();
+            // Normalize YYYY-MM-DD to D-M-YYYY
+            const m = d.match(/^(\d{4})-(\d{2})-(\d{2})/);
+            if (m) d = parseInt(m[3]) + '-' + parseInt(m[2]) + '-' + m[1];
+            return d;
+          })(),
           name:      row.Name||'',
           age:       row.Age||'',
           diagnosis: row.Diagnosis||'',
