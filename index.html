@@ -1075,7 +1075,13 @@ async function syncFromSheets() {
         seen.set(uid, {
           _uid:      uid,
           room:      row.Room||'',
-          admission: String(row.Admission||'').trim(),
+          admission: (() => {
+            const d = String(row.Admission||'').trim();
+            // Convert D-M-YYYY to YYYY-MM-DD for consistent filtering
+            const m = d.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
+            if (m) return m[3] + '-' + m[2].padStart(2,'0') + '-' + m[1].padStart(2,'0');
+            return d; // already yyyy-mm-dd or empty
+          })(),
           name:      row.Name||'',
           age:       row.Age||'',
           diagnosis: row.Diagnosis||'',
