@@ -273,6 +273,69 @@
   .perm-edit { background:rgba(245,158,11,0.15); color:var(--warning); }
   .perm-admin { background:rgba(16,185,129,0.15); color:var(--success); }
 
+
+  /* ── Layout Mode Toggle ── */
+  .layout-toggle { display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:10px; padding:4px; }
+  .layout-btn { padding:5px 13px; border-radius:7px; border:none; font-family:'Cairo',sans-serif; font-size:0.78rem; font-weight:600; cursor:pointer; transition:all 0.18s; background:transparent; color:var(--text-muted); }
+  .layout-btn.active { background:var(--accent); color:#fff; box-shadow:0 2px 8px var(--accent-glow); }
+  body.light .layout-toggle { background:rgba(0,0,0,0.04); }
+  body.light .layout-btn { color:rgba(30,41,59,0.5); }
+  body.light .layout-btn.active { color:#fff; }
+
+  /* ── Simple mode: fit to screen, no lab cols ── */
+  @media (min-width:769px) {
+    body.layout-simple #patientTable { min-width:unset !important; width:100% !important; table-layout:fixed !important; }
+    body.layout-simple .lab-col { display:none !important; }
+    body.layout-simple .col-room    { width:7%; }
+    body.layout-simple .col-date    { width:10%; }
+    body.layout-simple .col-name    { width:16%; }
+    body.layout-simple .col-age     { width:5%; }
+    body.layout-simple .col-diag    { width:20%; }
+    body.layout-simple .col-dec     { width:14%; }
+    body.layout-simple .col-anes    { width:10%; }
+    body.layout-simple .col-skin    { width:8%; }
+    body.layout-simple .col-notes   { width:10%; }
+    body.layout-simple td, body.layout-simple th { white-space:normal !important; word-break:break-word; }
+  }
+
+  /* ── Advanced mode: fit to screen, stacked cells ── */
+  @media (min-width:769px) {
+    body.layout-advanced #patientTable { min-width:unset !important; width:100% !important; table-layout:fixed !important; }
+    body.layout-advanced .col-select  { width:3%; }
+    body.layout-advanced .col-room    { width:6%; }
+    body.layout-advanced .col-date    { width:8%; }
+    body.layout-advanced .col-nameage { width:12%; }
+    body.layout-advanced .col-diag    { width:13%; }
+    body.layout-advanced .col-dec     { width:10%; }
+    body.layout-advanced .col-labs    { width:22%; }
+    body.layout-advanced .col-anes    { width:8%; }
+    body.layout-advanced .col-skin    { width:7%; }
+    body.layout-advanced .col-notes   { width:9%; }
+    body.layout-advanced .col-actions { width:6%; }
+    body.layout-advanced td, body.layout-advanced th { white-space:normal !important; word-break:break-word; vertical-align:top; }
+  }
+
+  /* Advanced stacked cell styles */
+  .cell-nameage { display:flex; flex-direction:column; gap:2px; }
+  .cell-nameage .cell-id  { font-size:0.65rem; color:var(--text-muted); font-family:'Inter',sans-serif; }
+  .cell-nameage .cell-nm  { font-weight:600; color:#fff; }
+  body.light .cell-nameage .cell-nm { color:#1e293b; }
+  .cell-nameage .cell-ag  { font-size:0.75rem; color:var(--text-muted); }
+  .cell-labs { display:flex; flex-wrap:wrap; gap:3px 6px; }
+  .cell-labs .lab-item { font-size:0.7rem; white-space:nowrap; }
+  .cell-labs .lab-item span { color:var(--text-muted); }
+  .cell-multiline { display:flex; flex-direction:column; gap:2px; font-size:0.78rem; }
+  .cell-multiline .ml-label { font-size:0.62rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; }
+
+  /* Hide individual lab th/td in advanced mode (merged into labs col) */
+  body.layout-advanced .adv-hide { display:none !important; }
+  /* Show advanced-only elements */
+  .adv-only { display:none; }
+  body.layout-advanced .adv-only { display:table-row !important; }
+  body.layout-advanced .adv-only-cell { display:table-cell !important; }
+  /* Simple mode hides advanced header row */
+  body.layout-simple .adv-only { display:none !important; }
+
   /* Print */
   @page { size:auto; margin:0; }
   @media print {
@@ -397,6 +460,10 @@
       <input type="text" id="searchInput" placeholder="Global search across all columns..." oninput="renderTable()">
     </div>
     <button class="btn btn-ghost btn-sm" onclick="clearAllFilters()" title="Clear all filters">✕ Clear Filters</button>
+    <div class="layout-toggle">
+      <button class="layout-btn active" id="btnSimple" onclick="setLayout('simple')">📋 Simple</button>
+      <button class="layout-btn" id="btnAdvanced" onclick="setLayout('advanced')">🔬 Advanced</button>
+    </div>
   </div>
 
   <div class="print-header-info" style="display:none" id="printHeaderInfo"></div>
@@ -404,34 +471,50 @@
   <div class="table-wrapper">
     <table id="patientTable">
       <thead>
-        <tr class="header-row">
-          <th class="th-center select-col"><input type="checkbox" id="checkAll" onclick="toggleCheckAll(this)" title="Select all" style="width:16px;height:16px;cursor:pointer;accent-color:var(--accent)"></th>
-          <th onclick="sortBy('room')">Room</th>
-          <th onclick="sortBy('admission')">Date of Admission</th>
-          <th onclick="sortBy('name')">Name</th>
-          <th onclick="sortBy('age')">Age</th>
-          <th onclick="sortBy('diagnosis')">Diagnosis</th>
-          <th onclick="sortBy('decision')">Decision</th>
-          <th onclick="sortBy('hb')">HB</th>
-          <th onclick="sortBy('plt')">PLT</th>
-          <th onclick="sortBy('inr')">INR</th>
-          <th onclick="sortBy('sgot')">SGOT</th>
-          <th onclick="sortBy('sgpt')">SGPT</th>
-          <th onclick="sortBy('screatinine')">S.Creatinine</th>
-          <th onclick="sortBy('albumin')">Albumin</th>
-          <th onclick="sortBy('bloodgroup')">Blood Group</th>
-          <th onclick="sortBy('virology')">Virology</th>
-          <th onclick="sortBy('anesthesia')">Status</th>
-          <th onclick="sortBy('skin')">Skin</th>
-          <th onclick="sortBy('notes')">Notes</th>
-          <th class="th-center" id="actionsHeader">Actions</th>
+        <!-- ── SIMPLE header row ── -->
+        <tr class="header-row" id="simpleHeaderRow">
+          <th class="th-center select-col col-select"><input type="checkbox" id="checkAll" onclick="toggleCheckAll(this)" title="Select all" style="width:16px;height:16px;cursor:pointer;accent-color:var(--accent)"></th>
+          <th class="col-room" onclick="sortBy('room')">Room</th>
+          <th class="col-date" onclick="sortBy('admission')">Date</th>
+          <th class="col-name" onclick="sortBy('name')">Name</th>
+          <th class="col-age" onclick="sortBy('age')">Age</th>
+          <th class="col-diag" onclick="sortBy('diagnosis')">Diagnosis</th>
+          <th class="col-dec" onclick="sortBy('decision')">Decision</th>
+          <th class="lab-col col-labs" onclick="sortBy('hb')">HB</th>
+          <th class="lab-col" onclick="sortBy('plt')">PLT</th>
+          <th class="lab-col" onclick="sortBy('inr')">INR</th>
+          <th class="lab-col" onclick="sortBy('sgot')">SGOT</th>
+          <th class="lab-col" onclick="sortBy('sgpt')">SGPT</th>
+          <th class="lab-col" onclick="sortBy('screatinine')">S.Cr</th>
+          <th class="lab-col" onclick="sortBy('albumin')">Alb</th>
+          <th class="lab-col" onclick="sortBy('bloodgroup')">BG</th>
+          <th class="lab-col" onclick="sortBy('virology')">Viro</th>
+          <th class="col-anes" onclick="sortBy('anesthesia')">Status</th>
+          <th class="col-skin" onclick="sortBy('skin')">Skin</th>
+          <th class="col-notes" onclick="sortBy('notes')">Notes</th>
+          <th class="th-center col-actions" id="actionsHeader">Actions</th>
         </tr>
+        <!-- ── ADVANCED header row (Name+ID+Age merged, Labs merged) ── -->
+        <tr class="header-row adv-only" id="advHeaderRow">
+          <th class="th-center col-select"><input type="checkbox" id="checkAll2" onclick="toggleCheckAll(this)" title="Select all" style="width:16px;height:16px;cursor:pointer;accent-color:var(--accent)"></th>
+          <th class="col-room" onclick="sortBy('room')">Room</th>
+          <th class="col-date" onclick="sortBy('admission')">Date</th>
+          <th class="col-nameage" onclick="sortBy('name')">Name / ID / Age</th>
+          <th class="col-diag" onclick="sortBy('diagnosis')">Diagnosis</th>
+          <th class="col-dec" onclick="sortBy('decision')">Decision</th>
+          <th class="col-labs">Lab Results</th>
+          <th class="col-anes" onclick="sortBy('anesthesia')">Status</th>
+          <th class="col-skin" onclick="sortBy('skin')">Skin</th>
+          <th class="col-notes" onclick="sortBy('notes')">Notes</th>
+          <th class="th-center col-actions" id="actionsHeaderAdv">Actions</th>
+        </tr>
+        <!-- ── Filter row (shared, adapts per mode) ── -->
         <tr class="filter-row">
-          <th class="select-col"><input type="text" disabled></th>
-          <th><input type="text" id="fil_room" placeholder="🔍" oninput="renderTable()"></th>
-          <th>
+          <th class="select-col col-select"><input type="text" disabled></th>
+          <th class="col-room"><input type="text" id="fil_room" placeholder="🔍" oninput="renderTable()"></th>
+          <th class="col-date">
             <div class="date-filter-wrapper">
-              <button class="date-filter-btn" id="dateFilterBtn" onclick="toggleDatePopup(event)">📅 All dates</button>
+              <button class="date-filter-btn" id="dateFilterBtn" onclick="toggleDatePopup(event)">📅 All</button>
               <div class="date-filter-popup" id="dateFilterPopup">
                 <label>Single date</label>
                 <input type="date" id="fil_date_single" onchange="onDateSingleChange()">
@@ -446,22 +529,24 @@
               </div>
             </div>
           </th>
-          <th><input type="text" id="fil_name" placeholder="🔍" oninput="renderTable()"></th>
-          <th><input type="text" id="fil_age" placeholder="🔍" oninput="renderTable()"></th>
-          <th><input type="text" id="fil_diagnosis" placeholder="🔍" oninput="renderTable()"></th>
-          <th><input type="text" id="fil_decision" placeholder="🔍" oninput="renderTable()"></th>
-          <th><input type="text" id="fil_hb" placeholder="🔍" oninput="renderTable()"></th>
-          <th><input type="text" id="fil_plt" placeholder="🔍" oninput="renderTable()"></th>
-          <th><input type="text" id="fil_inr" placeholder="🔍" oninput="renderTable()"></th>
-          <th><input type="text" id="fil_sgot" placeholder="🔍" oninput="renderTable()"></th>
-          <th><input type="text" id="fil_sgpt" placeholder="🔍" oninput="renderTable()"></th>
-          <th><input type="text" id="fil_screatinine" placeholder="🔍" oninput="renderTable()"></th>
-          <th><input type="text" id="fil_albumin" placeholder="🔍" oninput="renderTable()"></th>
-          <th><input type="text" id="fil_bloodgroup" placeholder="🔍" oninput="renderTable()"></th>
-          <th><input type="text" id="fil_virology" placeholder="🔍" oninput="renderTable()"></th>
-          <th><input type="text" id="fil_anesthesia" placeholder="🔍" oninput="renderTable()"></th>
-          <th><input type="text" id="fil_skin" placeholder="🔍" oninput="renderTable()"></th>
-          <th><input type="text" id="fil_notes" placeholder="🔍" oninput="renderTable()"></th>
+          <th class="col-name simple-only-th"><input type="text" id="fil_name" placeholder="🔍" oninput="renderTable()"></th>
+          <th class="col-age simple-only-th"><input type="text" id="fil_age" placeholder="🔍" oninput="renderTable()"></th>
+          <th class="col-nameage adv-only-th" style="display:none"><input type="text" id="fil_name2" placeholder="🔍 name" oninput="syncNameFilter()"></th>
+          <th class="col-diag"><input type="text" id="fil_diagnosis" placeholder="🔍" oninput="renderTable()"></th>
+          <th class="col-dec"><input type="text" id="fil_decision" placeholder="🔍" oninput="renderTable()"></th>
+          <th class="lab-col"><input type="text" id="fil_hb" placeholder="🔍" oninput="renderTable()"></th>
+          <th class="lab-col"><input type="text" id="fil_plt" placeholder="🔍" oninput="renderTable()"></th>
+          <th class="lab-col"><input type="text" id="fil_inr" placeholder="🔍" oninput="renderTable()"></th>
+          <th class="lab-col"><input type="text" id="fil_sgot" placeholder="🔍" oninput="renderTable()"></th>
+          <th class="lab-col"><input type="text" id="fil_sgpt" placeholder="🔍" oninput="renderTable()"></th>
+          <th class="lab-col"><input type="text" id="fil_screatinine" placeholder="🔍" oninput="renderTable()"></th>
+          <th class="lab-col"><input type="text" id="fil_albumin" placeholder="🔍" oninput="renderTable()"></th>
+          <th class="lab-col"><input type="text" id="fil_bloodgroup" placeholder="🔍" oninput="renderTable()"></th>
+          <th class="lab-col"><input type="text" id="fil_virology" placeholder="🔍" oninput="renderTable()"></th>
+          <th class="adv-labs-filter col-labs" style="display:none"><input type="text" id="fil_labs" placeholder="🔍 labs" oninput="renderTable()"></th>
+          <th class="col-anes"><input type="text" id="fil_anesthesia" placeholder="🔍" oninput="renderTable()"></th>
+          <th class="col-skin"><input type="text" id="fil_skin" placeholder="🔍" oninput="renderTable()"></th>
+          <th class="col-notes"><input type="text" id="fil_notes" placeholder="🔍" oninput="renderTable()"></th>
           <th><input type="text" disabled></th>
         </tr>
       </thead>
@@ -774,6 +859,7 @@ function showApp() {
     updateSyncStatus(true);
   }
   initTheme();
+  initLayout();
   syncFromSheets();
   renderTable();
 }
@@ -841,6 +927,38 @@ function applyTheme(t) {
 }
 function toggleTheme() { applyTheme(document.body.classList.contains('light') ? 'dark' : 'light'); }
 
+
+// ════════════════════════════════════════════════════════════
+// LAYOUT MODE
+// ════════════════════════════════════════════════════════════
+let layoutMode = localStorage.getItem('layoutMode') || 'simple';
+
+function setLayout(mode) {
+  layoutMode = mode;
+  localStorage.setItem('layoutMode', mode);
+  document.body.classList.remove('layout-simple','layout-advanced');
+  document.body.classList.add('layout-' + mode);
+  document.getElementById('btnSimple').classList.toggle('active', mode === 'simple');
+  document.getElementById('btnAdvanced').classList.toggle('active', mode === 'advanced');
+
+  // Toggle adv-only filter cells
+  document.querySelectorAll('.adv-only-th').forEach(el => el.style.display = mode === 'advanced' ? '' : 'none');
+  document.querySelectorAll('.simple-only-th').forEach(el => el.style.display = mode === 'simple' ? '' : 'none');
+  document.querySelectorAll('.adv-labs-filter').forEach(el => el.style.display = mode === 'advanced' ? '' : 'none');
+
+  renderTable();
+}
+
+function syncNameFilter() {
+  const v = document.getElementById('fil_name2').value;
+  document.getElementById('fil_name').value = v;
+  renderTable();
+}
+
+function initLayout() {
+  setLayout(layoutMode);
+}
+
 // ════════════════════════════════════════════════════════════
 // COLUMNS
 // ════════════════════════════════════════════════════════════
@@ -902,32 +1020,61 @@ function renderTable() {
   } else {
     empty.style.display = 'none';
     thead.style.display = '';
-    tbody.innerHTML = filtered.map(p => `
+    const isAdv = document.body.classList.contains('layout-advanced');
+    tbody.innerHTML = filtered.map(p => {
+      const labsCell = isAdv ? `
+        <td class="col-labs">
+          <div class="cell-labs">
+            ${p.hb        ? `<span class="lab-item"><span>HB </span>${esc(p.hb)}</span>` : ''}
+            ${p.plt       ? `<span class="lab-item"><span>PLT </span>${esc(p.plt)}</span>` : ''}
+            ${p.inr       ? `<span class="lab-item"><span>INR </span>${esc(p.inr)}</span>` : ''}
+            ${p.sgot      ? `<span class="lab-item"><span>SGOT </span>${esc(p.sgot)}</span>` : ''}
+            ${p.sgpt      ? `<span class="lab-item"><span>SGPT </span>${esc(p.sgpt)}</span>` : ''}
+            ${p.screatinine ? `<span class="lab-item"><span>Cr </span>${esc(p.screatinine)}</span>` : ''}
+            ${p.albumin   ? `<span class="lab-item"><span>Alb </span>${esc(p.albumin)}</span>` : ''}
+            ${p.bloodgroup? `<span class="lab-item"><span>BG </span>${esc(p.bloodgroup)}</span>` : ''}
+            ${p.virology  ? `<span class="lab-item"><span>Viro </span>${esc(p.virology)}</span>` : ''}
+          </div>
+        </td>` : `
+        <td class="lab-col">${esc(p.hb)}</td>
+        <td class="lab-col">${esc(p.plt)}</td>
+        <td class="lab-col">${esc(p.inr)}</td>
+        <td class="lab-col">${esc(p.sgot)}</td>
+        <td class="lab-col">${esc(p.sgpt)}</td>
+        <td class="lab-col">${esc(p.screatinine)}</td>
+        <td class="lab-col">${esc(p.albumin)}</td>
+        <td class="lab-col">${esc(p.bloodgroup)}</td>
+        <td class="lab-col">${esc(p.virology)}</td>`;
+
+      const nameCell = isAdv ? `
+        <td class="col-nameage">
+          <div class="cell-nameage">
+            <span class="cell-id">${esc(p._uid)}</span>
+            <span class="cell-nm">${esc(p.name)}</span>
+            <span class="cell-ag">${p.age ? esc(p.age)+' yrs' : ''}</span>
+          </div>
+        </td>` : `
+        <td class="name-cell col-name">${esc(p.name)}</td>
+        <td class="col-age">${esc(p.age)}</td>`;
+
+      return `
       <tr data-id="${p._uid}" class="${isDone(p) ? 'row-done' : ''}">
-        <td class="td-center select-col"><input type="checkbox" class="row-check" value="${p._uid}" onchange="updateCheckAllState()"></td>
-        <td class="room-cell">${esc(p.room)}</td>
-        <td>${p.admission ? esc(p.admission) : esc('')}</td>
-        <td class="name-cell">${esc(p.name)}</td>
-        <td>${esc(p.age)}</td>
-        <td style="max-width:500px;white-space:normal;font-size:1rem">${esc(p.diagnosis)}</td>
-        <td style="max-width:500px;white-space:normal;font-size:1rem">${decisionBadge(p.decision)}</td>
-        <td>${esc(p.hb)}</td>
-        <td>${esc(p.plt)}</td>
-        <td>${esc(p.inr)}</td>
-        <td>${esc(p.sgot)}</td>
-        <td>${esc(p.sgpt)}</td>
-        <td>${esc(p.screatinine)}</td>
-        <td>${esc(p.albumin)}</td>
-        <td>${esc(p.bloodgroup)}</td>
-        <td>${esc(p.virology)}</td>
-        <td class="status-cell">${esc(p.anesthesia)}</td>
-        <td>${esc(p.skin)}</td>
-        <td style="max-width:200px;white-space:normal;font-size:0.78rem;">${esc(p.notes)}</td>
-        ${canEdit ? `<td class="td-center"><div class="actions-cell">
+        <td class="td-center select-col col-select"><input type="checkbox" class="row-check" value="${p._uid}" onchange="updateCheckAllState()"></td>
+        <td class="room-cell col-room">${esc(p.room)}</td>
+        <td class="col-date">${p.admission ? esc(p.admission) : esc('')}</td>
+        ${nameCell}
+        <td class="col-diag" style="white-space:normal">${esc(p.diagnosis)}</td>
+        <td class="col-dec" style="white-space:normal">${decisionBadge(p.decision)}</td>
+        ${labsCell}
+        <td class="status-cell col-anes">${esc(p.anesthesia)}</td>
+        <td class="col-skin">${esc(p.skin)}</td>
+        <td class="col-notes" style="white-space:normal;font-size:0.78rem">${esc(p.notes)}</td>
+        ${canEdit ? `<td class="td-center col-actions"><div class="actions-cell">
           <button class="btn btn-ghost btn-sm" onclick="openEditModal('${p._uid}')">✏️</button>
           <button class="btn btn-danger btn-sm" onclick="archivePatient('${p._uid}')">🗑️</button>
-        </div></td>` : '<td></td>'}
-      </tr>`).join('');
+        </div></td>` : '<td class="col-actions"></td>'}
+      </tr>`;
+    }).join('');
   }
   updateStats();
 }
