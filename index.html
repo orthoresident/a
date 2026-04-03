@@ -330,11 +330,20 @@ async function apiLoad() {
   return data.doctors || [];
 }
 async function apiSave(docs) {
-  await fetch(API_URL, {
-    method: "POST", mode: "no-cors",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ doctors: docs }),
-  });
+  try {
+    await fetch(API_URL, {
+      method: "POST",
+      // Use text/plain to avoid CORS pre-flight errors
+      headers: { "Content-Type": "text/plain" }, 
+      body: JSON.stringify({ doctors: docs }),
+    });
+    // Since we can't easily read the response with Google redirects 
+    // in some browser setups, we assume success if no error is thrown.
+  } catch (err) {
+    console.error("Save failed:", err);
+    throw err;
+  }
+}
 }
 
 // ── Sync helpers ──────────────────────────────────────────────
