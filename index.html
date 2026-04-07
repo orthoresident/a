@@ -413,7 +413,6 @@
           <th onclick="sortBy('diagnosis')">Diagnosis</th>
           <th onclick="sortBy('decision')">Decision</th>
           <th onclick="sortBy('anesthesia')">Status</th>
-          <th onclick="sortBy('skin')">Extra</th>
           <th onclick="sortBy('notes')">Notes</th>
           <th class="th-center" id="actionsHeader">Actions</th>
         </tr>
@@ -442,7 +441,6 @@
           <th><input type="text" id="fil_diagnosis" placeholder="🔍" oninput="renderTable()"></th>
           <th><input type="text" id="fil_decision" placeholder="🔍" oninput="renderTable()"></th>
           <th><input type="text" id="fil_anesthesia" placeholder="🔍" oninput="renderTable()"></th>
-          <th><input type="text" id="fil_skin" placeholder="🔍" oninput="renderTable()"></th>
           <th><input type="text" id="fil_notes" placeholder="🔍" oninput="renderTable()"></th>
           <th><input type="text" disabled></th>
         </tr>
@@ -894,7 +892,6 @@ function renderTable() {
         <td style="max-width:500px;white-space:normal;font-size:1rem">${esc(p.diagnosis)}</td>
         <td style="max-width:500px;white-space:normal;font-size:1rem">${decisionBadge(p.decision)}</td>
         <td class="status-cell">${esc(p.anesthesia)}</td>
-        <td>${esc(p.skin)}</td>
         <td style="max-width:200px;white-space:normal;font-size:0.78rem;">${esc(p.notes)}</td>
         ${canEdit ? `<td class="td-center"><div class="actions-cell">
           <button class="btn btn-ghost btn-sm" onclick="openEditModal('${p._uid}')">✏️</button>
